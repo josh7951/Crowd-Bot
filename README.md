@@ -1,8 +1,25 @@
-## Crowd Bot for Discord
+# Crowd Bot for Discord
 
 A simple bot used to query a location and display the current live crowd data
 
-#### Command List
+<br>
+
+## Table of Contents
+- [Installation](#Installation)
+- [Commands](#Commands)
+- [APIs](#APIs)
+
+
+### Installation 
+
+Installing dependencies and packages (Python >=3.5.3 required)
+```python
+    #For Windows
+    py -3 -m pip install -U discord.py
+    pip3 install python-dotenv
+    pip3 install requests
+```
+#### Commands
 
 - `?help` displays command list
 - `?crowd <query>` display live crowd data
@@ -11,8 +28,8 @@ A simple bot used to query a location and display the current live crowd data
 - `?ping` latency tester
 
 
-## APIs
+### APIs
 
-- [discord.py](https://github.com/Rapptz/discord.py)
+- [discord.py](https://discordpy.readthedocs.io/en/stable/)
 - [BestTime](https://besttime.app/)
 
