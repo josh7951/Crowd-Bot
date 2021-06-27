@@ -19,6 +19,11 @@ Installing dependencies and packages (Python >=3.5.3 required)
     pip3 install python-dotenv
     pip3 install requests
 ```
+Set up your `.env` variables
+```prop
+    DISCORD_TOKEN=discord_bot_token
+    BT_PRIVATE_KEY=BestTime_private_key
+```
 #### Commands
 
 - `?help` displays command list
