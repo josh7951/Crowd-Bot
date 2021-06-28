@@ -28,7 +28,7 @@ Set up your `.env` variables
 
 - `?help` displays command list
 - `?crowd <query>` display live crowd data
-- `?magicman` Magic 8Ball
+- `?magicman <question>` Magic 8Ball
     - also can use `?_8ball`
 - `?ping` latency tester
 
