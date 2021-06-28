@@ -61,9 +61,20 @@ async def _8ball(ctx, *, question):
     await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
 
 @client.command()
-async def test(ctx):
-    url = f"https://besttime.app/api/v1/keys/{os.getenv('BT_PRIVATE_KEY')}"
-    response = requests.request("GET", url)
+async def test(ctx, *, query):
+    await ctx.send(f'Enter the approximate address of {query}:')
+
+    user_input = await client.wait_for('message', check=lambda m: m.channel == ctx.channel)
+    query_location = user_input.content
+
+    url = "https://besttime.app/api/v1/forecasts/live"
+
+    params = {
+        'api_key_private': {os.getenv('BT_PRIVATE_KEY')},
+        'venue_name': {query},
+        'venue_address': {query_location}
+    }
+    response = requests.request("POST", url, params=params)
     await ctx.send(response.json())
 
 @client.command()
@@ -80,31 +91,34 @@ async def crowd(ctx, *, query):
         'venue_name': {query},
         'venue_address': {query_location}
     }
-    ## JSON OBJECT THAT IS RETURNED
+    ## JSON OBJECT THAT IS RETURNED if SUCCESSFUL
     # {'analysis': {'hour_end': 14, 'hour_end_12': '2PM', 'hour_start': 13, 'hour_start_12': '1PM', 'note': "parameter 'venue_live_forecasted_detla' is deprecated, and replaced by 'venue_live_forecasted_delta'", 'venue_forecasted_busyness_available': False, 'venue_live_busyness': 50, 'venue_live_busyness_available': True, 'venue_live_forecasted_delta': 'Not available'}, 'status': 'OK', 'venue_info': {'venue_address': '37217 47th St E Palmdale, CA 93552 United States', 'venue_current_gmttime': 'Sunday 2021-06-27 08:18PM', 'venue_current_localtime': 'Sunday 2021-06-27 01:18PM', 'venue_id': 'ven_344b344f7950625f53423652416f77346e4a763379395f4a496843', 'venue_name': "McDonald's", 'venue_open': 'Closed', 'venue_timezone': 'America/Los_Angeles'}}
+    ## JSON OBJECT THAT IS RETURNED IF UNSUCCESSFUL
+    # {'message': 'Venue not found', 'status': 'error', 'venue_address': 'palmdale', 'venue_name': 'mcdonalds'}
 
     response = requests.request("POST", url, params=params)
-    crowd_index = response.json()
-    index_val = crowd_index['analysis']['venue_live_busyness']
-    await ctx.send(f"Current Crowd index: {index_val}")
-    if index_val <= 15:
-        await ctx.send("It's a ghost town!")
-    elif 16 <= index_val < 30:
-        await ctx.send("It's a little busy")
-    elif 30 <= index_val < 60:
-        await ctx.send("It's about average")
-    elif 60 <= index_val < 75:
-        await ctx.send("It's pretty busy!")
+    crowd_json = response.json()
+    
+    if 'message' in crowd_json and crowd_json['message'] == 'Venue not found':
+        await ctx.send('Error: Venue not found. Please check your spelling or be more specific with the address!')
     else:
-        await ctx.send("It's packed!")
+        if crowd_json['analysis']['venue_live_busyness_available'] == True:
 
-
-
+            crowd_val = crowd_json['analysis']['venue_live_busyness']
+            
+            await ctx.send(f"Current Crowd index: {crowd_val}")
+            if crowd_val <= 15:
+                await ctx.send("It's a ghost town!")
+            elif 16 <= crowd_val < 30:
+                await ctx.send("It's a little busy")
+            elif 30 <= crowd_val < 60:
+                await ctx.send("It's about average")
+            elif 60 <= crowd_val < 75:
+                await ctx.send("It's pretty busy!")
+            else:
+                await ctx.send("It's packed!")   
+        else:
+            await ctx.send(f"Error: No Crowd Data available - location may be closed")
 
 ## get private discord token
 client.run(os.getenv('DISCORD_TOKEN'))
-
-## get besttime api private key
-## url = f"https://besttime.app/api/v1/keys/{os.getenv('BEST_TIME_PRIVATE_KEY')}"
-## response = requests.request("GET", url)
-## print(response.json())
