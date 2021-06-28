@@ -110,13 +110,13 @@ async def crowd(ctx, *, query):
             if crowd_val <= 15:
                 await ctx.send("It's a ghost town!")
             elif 16 <= crowd_val < 30:
-                await ctx.send("It's a little busy")
+                await ctx.send("There's a small crowd but it's still pretty empty")
             elif 30 <= crowd_val < 60:
-                await ctx.send("It's about average")
+                await ctx.send("It's getting a little busy")
             elif 60 <= crowd_val < 75:
                 await ctx.send("It's pretty busy!")
             else:
-                await ctx.send("It's packed!")   
+                await ctx.send("It's packed!!")   
         else:
             await ctx.send(f"Error: No Crowd Data available - location may be closed")
 
