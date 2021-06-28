@@ -107,9 +107,9 @@ async def crowd(ctx, *, query):
             crowd_val = crowd_json['analysis']['venue_live_busyness']
             
             await ctx.send(f"Current Crowd index: {crowd_val}")
-            if crowd_val <= 15:
+            if crowd_val < 15:
                 await ctx.send("It's a ghost town!")
-            elif 16 <= crowd_val < 30:
+            elif 15 <= crowd_val < 30:
                 await ctx.send("There's a small crowd but it's still pretty empty")
             elif 30 <= crowd_val < 60:
                 await ctx.send("It's getting a little busy")
