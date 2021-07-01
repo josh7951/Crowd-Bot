@@ -1,16 +1,18 @@
 import os
-from discord import channel
+import datetime
 import requests
 import discord 
 import random
 
+from discord import channel
 from dotenv import load_dotenv, find_dotenv
-from discord.ext import commands
+from discord.ext import commands, timers
 
 load_dotenv(find_dotenv())
 
 client = commands.Bot(command_prefix = '?')
 client.remove_command('help')
+client.timer_manager = timers.TimerManager(client)
 
 @client.event 
 async def on_ready():
@@ -28,7 +30,8 @@ async def help(ctx):
     embed.set_author(name='Command List')
     embed.add_field(name="crowd <query>", value="Displays live crowd data after taking query input and approximate location input (be as close to accurate with the address as possible :))", inline=False)
     embed.add_field(name="flipcoin", value="Flips a coin", inline=False)
-    embed.add_field(name="magicman <question>", value="Magic 8Ball\nalso can use `?_8ball`", inline=False)
+    embed.add_field(name="magicman <question>", value="Magic 8Ball\nalso can use `?8ball`", inline=False)
+    embed.add_field(name="remind <Year/Month/Day> <reminder>", value="Remind you to do something!", inline=False)
     embed.add_field(name="ping", value="Used to test latency", inline=False)
 
     await ctx.send(embed=embed)
@@ -37,7 +40,7 @@ async def help(ctx):
 async def ping(ctx):
     await ctx.send(f'Pong - latency: {round(client.latency)*1000} ms')
 
-@client.command(aliases = ['_8ball', 'magicman'])
+@client.command(aliases = ['8ball', 'magicman'])
 async def _8ball(ctx, *, question):
     responses = ["As I see it, yes.", 
                  "Ask again later.", 
@@ -83,6 +86,25 @@ async def flipcoin(ctx):
     choices = ["Heads", "Tails"]
     coin_flip = random.choice(choices)
     await ctx.send(coin_flip)
+
+@client.command()
+async def remind(ctx, time, *, text):
+    """Data must be in ``Y/M/D`` format."""
+    date = datetime.datetime(*map(int, time.split("/")))
+
+    client.timer_manager.create_timer("reminder", date, args=(ctx.channel.id, ctx.author.id, text))
+
+@client.event
+async def on_reminder(channel_id, author_id, text):
+    channel = client.get_channel(channel_id)
+
+    await channel.send("Hey, <@{0}>, don't forget to: {1}".format(author_id, text))
+    insult = [ "Skuzz Ball",
+               "Slooze",
+               "Fatass",
+               "Dirty Cuck"]
+
+    await channel.send(f"You {random.choice(insult)}")
 
 @client.command()
 async def crowd(ctx, *, query):

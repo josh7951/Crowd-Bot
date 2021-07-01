@@ -18,6 +18,7 @@ Installing dependencies and packages (Python >=3.5.3 required)
     py -3 -m pip install -U discord.py
     pip3 install python-dotenv
     pip3 install requests
+    pip3 install discord-timers -U
 ```
 Set up your `.env` variables
 ```prop
@@ -28,6 +29,7 @@ Set up your `.env` variables
 
 - `?help` displays command list
 - `?crowd <query>` display live crowd data
+- `?flipcoin` flips a coin
 - `?magicman <question>` Magic 8Ball
     - also can use `?_8ball`
 - `?ping` latency tester
