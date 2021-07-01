@@ -27,7 +27,8 @@ async def help(ctx):
 
     embed.set_author(name='Command List')
     embed.add_field(name="crowd <query>", value="Displays live crowd data after taking query input and approximate location input (be as close to accurate with the address as possible :))", inline=False)
-    embed.add_field(name="magicman <question>", value="Magic 8Ball\nalso can use `?8ball`", inline=False)
+    embed.add_field(name="flipcoin", value="Flips a coin", inline=False)
+    embed.add_field(name="magicman <question>", value="Magic 8Ball\nalso can use `?_8ball`", inline=False)
     embed.add_field(name="ping", value="Used to test latency", inline=False)
 
     await ctx.send(embed=embed)
@@ -36,7 +37,7 @@ async def help(ctx):
 async def ping(ctx):
     await ctx.send(f'Pong - latency: {round(client.latency)*1000} ms')
 
-@client.command(aliases = ['8ball', 'magicman'])
+@client.command(aliases = ['_8ball', 'magicman'])
 async def _8ball(ctx, *, question):
     responses = ["As I see it, yes.", 
                  "Ask again later.", 
@@ -76,6 +77,12 @@ async def test(ctx, *, query):
     }
     response = requests.request("POST", url, params=params)
     await ctx.send(response.json())
+
+@client.command()
+async def flipcoin(ctx):
+    choices = ["Heads", "Tails"]
+    coin_flip = random.choice(choices)
+    await ctx.send(coin_flip)
 
 @client.command()
 async def crowd(ctx, *, query):
